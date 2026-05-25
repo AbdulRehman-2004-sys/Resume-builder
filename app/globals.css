@@ -5,6 +5,18 @@
   --foreground: #171717;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -23,4 +35,219 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+@keyframes header-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-text-reveal {
+  from {
+    filter: blur(10px);
+    opacity: 0;
+    transform: translateY(26px) scale(0.98);
+  }
+
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes hero-highlight-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes hero-fade-up {
+  from {
+    filter: blur(8px);
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-mockup-enter {
+  from {
+    filter: blur(10px);
+    opacity: 0;
+    transform: translateY(34px) scale(0.96);
+  }
+
+  to {
+    filter: blur(0);
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes floating-badge {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes resume-sheet-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgb(17 24 39 / 0);
+  }
+
+  50% {
+    box-shadow: 0 18px 45px rgb(17 24 39 / 0.08);
+  }
+}
+
+.animate-header-drop {
+  animation: header-drop 520ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-title-word {
+  animation: hero-text-reveal 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.hero-title-highlight {
+  background: linear-gradient(90deg, #374151, #111827, #2563eb, #374151);
+  background-clip: text;
+  background-size: 220% 100%;
+  color: transparent;
+  animation: hero-highlight-shift 6s ease-in-out infinite;
+  -webkit-background-clip: text;
+}
+
+@media (max-width: 639px) {
+  .hero-title-word {
+    display: block;
+  }
+}
+
+.hero-fade-up {
+  animation: hero-fade-up 740ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-mockup-enter {
+  animation: hero-mockup-enter 900ms cubic-bezier(0.16, 1, 0.3, 1) 900ms both;
+}
+
+.floating-badge {
+  animation: floating-badge 4.2s ease-in-out infinite;
+}
+
+.resume-sheet-animated {
+  animation: resume-sheet-pulse 4.8s ease-in-out infinite;
+}
+
+.resume-sheet-animated > div:not(:first-child) {
+  transform-origin: left center;
+  transition: transform 500ms ease, opacity 500ms ease;
+}
+
+.resume-sheet-animated:hover > div:not(:first-child) {
+  opacity: 0.85;
+  transform: scaleX(0.94);
+}
+
+.reveal {
+  filter: blur(8px);
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 760ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 760ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform, filter;
+}
+
+.reveal-visible {
+  filter: blur(0);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-header-drop,
+  .hero-title-word,
+  .hero-title-highlight,
+  .hero-fade-up,
+  .hero-mockup-enter,
+  .floating-badge,
+  .resume-sheet-animated {
+    animation: none !important;
+  }
+
+  .animate-header-drop,
+  .hero-title-word,
+  .hero-fade-up,
+  .hero-mockup-enter,
+  .reveal,
+  .reveal-visible {
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+.resume-preview-viewport {
+  container-type: inline-size;
+}
+
+.resume-preview-shell {
+  --resume-scale: min(1, calc((100cqw - 2rem) / 794));
+  width: min(794px, calc(100cqw - 2rem));
+  height: calc(1123px * var(--resume-scale));
+  min-height: calc(1123px * var(--resume-scale));
+  margin-inline: auto;
+}
+
+.resume-preview-sheet {
+  width: 794px;
+  transform: scale(var(--resume-scale));
+  transform-origin: top center;
+}
+
+@media print {
+  body {
+    overflow: visible;
+  }
+
+  .resume-preview-viewport,
+  .resume-preview-shell,
+  .resume-preview-sheet {
+    container-type: normal;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
 }
