@@ -15,26 +15,26 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
       style={{ fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
     >
         {/* HEADER */}
-        <div className="mb-4 text-center sm:text-left">
-          <h1 className="text-4xl font-bold mb-2 tracking-tight">{personalInfo.name}</h1>
-          <div className="flex justify-between items-start text-xs leading-relaxed mt-2 border-b-2 border-black pb-3">
-            <div className="flex flex-col gap-1">
+        <div className="mb-2 text-center sm:text-left">
+          <h1 className="text-4xl font-bold tracking-tight">{personalInfo.name}</h1>
+          <div className="flex justify-between items-start text-xs leading-relaxed border-b border-black pb-1">
+            <div className="flex flex-col">
               {personalInfo.linkedin && (
                 <div className="flex gap-2">
                   <span className="font-bold w-16">Linkedin:</span>
-                  <a href={personalInfo.linkedin} className="text-blue-600 hover:underline">{personalInfo.linkedin}</a>
+                  <a href={personalInfo.linkedin}>{personalInfo.linkedin}</a>
                 </div>
               )}
               {personalInfo.github && (
                 <div className="flex gap-2">
                   <span className="font-bold w-16">Github:</span>
-                  <a href={personalInfo.github} className="text-blue-600 hover:underline">{personalInfo.github}</a>
+                  <a href={personalInfo.github}>{personalInfo.github}</a>
                 </div>
               )}
               {personalInfo.portfolio && (
                 <div className="flex gap-2">
                   <span className="font-bold w-16">Portfolio:</span>
-                  <a href={personalInfo.portfolio} className="text-blue-600 hover:underline">{personalInfo.portfolio}</a>
+                  <a href={personalInfo.portfolio}>{personalInfo.portfolio}</a>
                 </div>
               )}
             </div>
@@ -55,7 +55,7 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
         {/* SUMMARY */}
         {summary && (
-          <div className="mb-4 text-justify">
+          <div className="mb-2 text-justify">
             <p className="text-xs leading-relaxed">
               <span className="font-bold border-b border-black">Summary:</span> {summary}
             </p>
@@ -65,7 +65,7 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         {/* SKILLS */}
         {skills.length > 0 && (
           <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border-b border-black mb-2 pb-1 underline decoration-2 underline-offset-4">Skills</h2>
+            <h2 className="text-lg font-bold text-center border border-black mb-2 pb-1 underline decoration-2 underline-offset-4">Skills</h2>
             <ul className="text-xs space-y-1 mt-2">
               {skills.map((skill, index) => (
                 <li key={index} className="flex">
@@ -80,7 +80,7 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         {/* EXPERIENCE */}
         {experience.length > 0 && (
           <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border-b border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Work Experience</h2>
+            <h2 className="text-lg font-bold text-center border border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Work Experience</h2>
             <div className="space-y-4 text-xs">
               {experience.map((exp) => (
                 <div key={exp.id}>
@@ -102,12 +102,12 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         {/* PROJECTS */}
         {projects.length > 0 && (
           <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border-b border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Projects</h2>
+            <h2 className="text-lg font-bold text-center border border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Projects</h2>
             <div className="space-y-4 text-xs">
               {projects.map((proj) => (
                 <div key={proj.id}>
                   <div className="font-bold mb-1">
-                    {proj.title} | <a href={proj.link} className="text-blue-600 hover:underline">{proj.link}</a>
+                    {proj.title} | <a href={proj.link}>{proj.link}</a>
                   </div>
                   <ul className="list-disc list-inside space-y-1 pl-1 mb-1">
                     {proj.achievements.map((ach, idx) => (
@@ -128,7 +128,7 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         {/* EDUCATION */}
         {education.length > 0 && (
           <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border-b border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Education</h2>
+            <h2 className="text-lg font-bold text-center border border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Education</h2>
             <div className="space-y-3 text-xs">
               {education.map((ed) => (
                 <div key={ed.id}>
@@ -149,7 +149,7 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
         {/* AWARDS */}
         {awards.length > 0 && (
           <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border-b border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Awards & Achievements</h2>
+            <h2 className="text-lg font-bold text-center border-t border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Awards & Achievements</h2>
             <ul className="list-disc list-inside text-xs space-y-1 pl-1">
               {awards.map((award) => (
                 <li key={award.id} className="leading-snug">{award.description}</li>

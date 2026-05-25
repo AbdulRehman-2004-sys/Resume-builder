@@ -27,7 +27,7 @@ const STEPS = [
 ];
 
 const FormWizard = () => {
-  const { currentStep, setCurrentStep, resumeData, resumeId, setResumeId, slug, setSlug } = useResumeContext();
+  const { currentStep, setCurrentStep, resumeData, resumeId, setResumeId, slug, setSlug, selectedTemplate } = useResumeContext();
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -42,7 +42,8 @@ const FormWizard = () => {
 
   const handleSave = async () => {
     setIsSaving(true);
-    const result = await saveResume(resumeData, resumeId);
+    const dataToSave = { ...resumeData, templateId: selectedTemplate };
+    const result = await saveResume(dataToSave, resumeId);
     if (result.success && result.id && result.slug) {
       setResumeId(result.id);
       setSlug(result.slug);

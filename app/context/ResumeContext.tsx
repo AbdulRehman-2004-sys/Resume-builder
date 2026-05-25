@@ -156,6 +156,8 @@ type ResumeContextType = {
   setResumeId: React.Dispatch<React.SetStateAction<string | null>>;
   slug: string | null;
   setSlug: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedTemplate: string;
+  setSelectedTemplate: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
@@ -165,6 +167,7 @@ export const ResumeProvider = ({ children }: { children: ReactNode }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [resumeId, setResumeId] = useState<string | null>(null);
   const [slug, setSlug] = useState<string | null>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
 
   // Load from URL if present (for "Share Link" functionality)
   useEffect(() => {
@@ -228,6 +231,8 @@ export const ResumeProvider = ({ children }: { children: ReactNode }) => {
         setResumeId,
         slug,
         setSlug,
+        selectedTemplate,
+        setSelectedTemplate,
       }}
     >
       {children}

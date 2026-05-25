@@ -1,11 +1,15 @@
 "use server";
 
-import connectToDatabase from "../lib/mongodb";
-import Resume from "../lib/models/Resume";
+import { createClient } from "../lib/supabase-server";
 
 export async function saveResume(resumeData: any, existingId?: string | null) {
   try {
-    await connectToDatabase();
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
 
     const fullName = resumeData.personalInfo?.name || "anonymous";
     let baseSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -13,31 +17,54 @@ export async function saveResume(resumeData: any, existingId?: string | null) {
 
     if (existingId) {
       // Update existing record
-      const updatedResume = await Resume.findByIdAndUpdate(
-        existingId,
-        { data: resumeData, slug: baseSlug },
-        { new: true }
-      );
+      const { data: updatedResume, error } = await supabase
+        .from("resumes")
+        .update({ data: resumeData, slug: baseSlug })
+        .eq("id", existingId)
+        .eq("user_id", user.id)
+        .select()
+        .single();
+        
+      if (error) throw error;
+
       if (updatedResume) {
-        return { success: true, id: updatedResume._id.toString(), slug: updatedResume.slug };
+        return { success: true, id: updatedResume.id, slug: updatedResume.slug };
       }
     }
 
     // Create a unique slug if creating new
     let slug = baseSlug;
     let count = 1;
-    while (await Resume.findOne({ slug })) {
+    
+    // Function to check if slug exists
+    const checkSlugExists = async (checkSlug: string) => {
+      const { data } = await supabase
+        .from("resumes")
+        .select("id")
+        .eq("slug", checkSlug)
+        .maybeSingle(); // Use maybeSingle to avoid errors when no rows are found
+      return !!data;
+    };
+    
+    while (await checkSlugExists(slug)) {
       slug = `${baseSlug}-${count}`;
       count++;
     }
 
     // Create new record
-    const newResume = await Resume.create({
-      slug,
-      data: resumeData,
-    });
+    const { data: newResume, error } = await supabase
+      .from("resumes")
+      .insert({
+        slug,
+        data: resumeData,
+        user_id: user.id
+      })
+      .select()
+      .single();
+      
+    if (error) throw error;
 
-    return { success: true, id: newResume._id.toString(), slug: newResume.slug };
+    return { success: true, id: newResume.id, slug: newResume.slug };
   } catch (error: any) {
     console.error("Error saving resume:", error);
     return { success: false, error: error.message || "Failed to save resume" };
@@ -46,18 +73,64 @@ export async function saveResume(resumeData: any, existingId?: string | null) {
 
 export async function getResumeById(id: string) {
   try {
-    await connectToDatabase();
-    const resume = await Resume.findById(id).lean();
-    if (!resume) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data: resume, error } = await supabase
+      .from("resumes")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+      
+    if (error || !resume) {
       return { success: false, error: "Resume not found" };
     }
+    
+    // Optional: check if the user is the owner, or if you want resumes to be public for viewing.
+    // We will allow anyone to view it if they have the ID/slug, but only owner can edit.
+    
     return {
       success: true,
-      data: JSON.parse(JSON.stringify(resume.data)),
+      data: typeof resume.data === 'string' ? JSON.parse(resume.data) : resume.data,
       slug: resume.slug,
+      isOwner: user?.id === resume.user_id,
     };
   } catch (error) {
     console.error("Error fetching resume:", error);
     return { success: false, error: "Failed to fetch resume" };
+  }
+}
+
+export async function getUserResumes() {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const { data: resumes, error } = await supabase
+      .from("resumes")
+      .select("id, slug, created_at, data")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    return {
+      success: true,
+      data: resumes.map(r => ({
+        id: r.id,
+        slug: r.slug,
+        created_at: r.created_at,
+        // just extract the name and job title for preview
+        name: r.data?.personalInfo?.name || "Untitled Resume",
+        title: r.data?.experience?.[0]?.title || "Resume",
+      }))
+    };
+  } catch (error: any) {
+    console.error("Error fetching user resumes:", error);
+    return { success: false, error: error.message || "Failed to fetch resumes" };
   }
 }
