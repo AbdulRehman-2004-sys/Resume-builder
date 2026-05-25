@@ -1,23 +1,23 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { useResumeContext } from "../context/ResumeContext";
+import { useResumeStore } from "../store/useResumeStore";
 
 const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
-  const { resumeData } = useResumeContext();
+  const { resumeData } = useResumeStore();
   const { personalInfo, summary, skills, experience, projects, education, awards } = resumeData;
 
   // The design requires black/white, exact borders, and standard fonts (like Arial or Inter).
   return (
     <div 
       ref={ref}
-      className="bg-white text-black w-[794px] min-h-[1123px] shadow-2xl box-border p-10 font-sans text-sm mx-auto"
+      className="bg-white text-black w-[794px] min-h-[1123px] shadow-2xl box-border p-2 font-sans text-sm mx-auto print:shadow-none print:m-0"
       style={{ fontFamily: "'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif" }}
     >
         {/* HEADER */}
         <div className="mb-2 text-center sm:text-left">
           <h1 className="text-4xl font-bold tracking-tight">{personalInfo.name}</h1>
-          <div className="flex justify-between items-start text-xs leading-relaxed border-b border-black pb-1">
+          <div className="flex justify-between items-start text-xs leading-relaxed border-b border-black">
             <div className="flex flex-col">
               {personalInfo.linkedin && (
                 <div className="flex gap-2">
@@ -55,18 +55,16 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
         {/* SUMMARY */}
         {summary && (
-          <div className="mb-2 text-justify">
-            <p className="text-xs leading-relaxed">
-              <span className="font-bold border-b border-black">Summary:</span> {summary}
-            </p>
+          <div className="text-justify">
+            <div className="text-xs leading-relaxed" dangerouslySetInnerHTML={{ __html: summary }} />
           </div>
         )}
 
         {/* SKILLS */}
         {skills.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border border-black mb-2 pb-1 underline decoration-2 underline-offset-4">Skills</h2>
-            <ul className="text-xs space-y-1 mt-2">
+          <div className="">
+            <h2 className="text-lg font-bold text-center border-t border-black my-1 underline decoration-2 underline-offset-4">Skills</h2>
+            <ul className="text-xs ">
               {skills.map((skill, index) => (
                 <li key={index} className="flex">
                   <span className="font-bold w-28 shrink-0">• {skill.category}:</span>
@@ -79,9 +77,9 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
         {/* EXPERIENCE */}
         {experience.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Work Experience</h2>
-            <div className="space-y-4 text-xs">
+          <div className="">
+            <h2 className="text-lg font-bold text-center border-t border-black my-1 underline decoration-2 underline-offset-4">Work Experience</h2>
+            <div className="space-y-2 text-xs">
               {experience.map((exp) => (
                 <div key={exp.id}>
                   <div className="flex justify-between font-bold mb-1">
@@ -101,9 +99,9 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
         {/* PROJECTS */}
         {projects.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Projects</h2>
-            <div className="space-y-4 text-xs">
+          <div className="">
+            <h2 className="text-lg font-bold text-center border-t border-black my-1 underline decoration-2 underline-offset-4">Projects</h2>
+            <div className="space-y-2 text-xs">
               {projects.map((proj) => (
                 <div key={proj.id}>
                   <div className="font-bold mb-1">
@@ -127,9 +125,9 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
         {/* EDUCATION */}
         {education.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Education</h2>
-            <div className="space-y-3 text-xs">
+          <div className="">
+            <h2 className="text-lg font-bold text-center border-t border-black my-1 underline decoration-2 underline-offset-4">Education</h2>
+            <div className="space-y-2 text-xs">
               {education.map((ed) => (
                 <div key={ed.id}>
                   <div className="flex justify-between font-bold">
@@ -138,7 +136,7 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
                   </div>
                   <div className="flex justify-between">
                     <span>{ed.degree}</span>
-                    {ed.gpa && <span>GPA: {ed.gpa}</span>}
+                    {ed.gpa && <span className="font-extrabold">GPA: {ed.gpa}</span>}
                   </div>
                 </div>
               ))}
@@ -148,8 +146,8 @@ const ResumePreview = forwardRef<HTMLDivElement>((props, ref) => {
 
         {/* AWARDS */}
         {awards.length > 0 && (
-          <div className="mb-4">
-            <h2 className="text-lg font-bold text-center border-t border-black mb-3 pb-1 underline decoration-2 underline-offset-4">Awards & Achievements</h2>
+          <div className="">
+            <h2 className="text-lg font-bold text-center border-t border-black my-1 underline decoration-2 underline-offset-4">Awards & Achievements</h2>
             <ul className="list-disc list-inside text-xs space-y-1 pl-1">
               {awards.map((award) => (
                 <li key={award.id} className="leading-snug">{award.description}</li>

@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type PersonalInfo = {
   name: string;
@@ -140,11 +141,11 @@ const initialData: ResumeData = {
   ],
 };
 
-type ResumeContextType = {
+type ResumeStore = {
   resumeData: ResumeData;
-  setResumeData: React.Dispatch<React.SetStateAction<ResumeData>>;
+  setResumeData: (data: ResumeData) => void;
   currentStep: number;
-  setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentStep: (step: number | ((prev: number) => number)) => void;
   updatePersonalInfo: (data: Partial<PersonalInfo>) => void;
   updateSummary: (summary: string) => void;
   updateSkills: (skills: Skill[]) => void;
@@ -153,97 +154,62 @@ type ResumeContextType = {
   updateEducation: (education: Education[]) => void;
   updateAwards: (awards: Award[]) => void;
   resumeId: string | null;
-  setResumeId: React.Dispatch<React.SetStateAction<string | null>>;
+  setResumeId: (id: string | null) => void;
   slug: string | null;
-  setSlug: React.Dispatch<React.SetStateAction<string | null>>;
+  setSlug: (slug: string | null) => void;
   selectedTemplate: string;
-  setSelectedTemplate: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedTemplate: (template: string) => void;
+  resetToInitial: () => void;
+  hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 };
 
-const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
-
-export const ResumeProvider = ({ children }: { children: ReactNode }) => {
-  const [resumeData, setResumeData] = useState<ResumeData>(initialData);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [resumeId, setResumeId] = useState<string | null>(null);
-  const [slug, setSlug] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>("classic");
-
-  // Load from URL if present (for "Share Link" functionality)
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const urlParams = new URLSearchParams(window.location.search);
-      const dataParam = urlParams.get("data");
-      if (dataParam) {
-        try {
-          const decodedData = JSON.parse(decodeURIComponent(atob(dataParam)));
-          setResumeData(decodedData);
-        } catch (error) {
-          console.error("Failed to parse resume data from URL", error);
-        }
+export const useResumeStore = create<ResumeStore>()(
+  persist(
+    (set) => ({
+      resumeData: initialData,
+      setResumeData: (data) => set({ resumeData: data }),
+      currentStep: 1,
+      setCurrentStep: (step) => set((state) => ({ 
+        currentStep: typeof step === 'function' ? step(state.currentStep) : step 
+      })),
+      updatePersonalInfo: (data) => set((state) => ({
+        resumeData: { ...state.resumeData, personalInfo: { ...state.resumeData.personalInfo, ...data } }
+      })),
+      updateSummary: (summary) => set((state) => ({
+        resumeData: { ...state.resumeData, summary }
+      })),
+      updateSkills: (skills) => set((state) => ({
+        resumeData: { ...state.resumeData, skills }
+      })),
+      updateExperience: (experience) => set((state) => ({
+        resumeData: { ...state.resumeData, experience }
+      })),
+      updateProjects: (projects) => set((state) => ({
+        resumeData: { ...state.resumeData, projects }
+      })),
+      updateEducation: (education) => set((state) => ({
+        resumeData: { ...state.resumeData, education }
+      })),
+      updateAwards: (awards) => set((state) => ({
+        resumeData: { ...state.resumeData, awards }
+      })),
+      resumeId: null,
+      setResumeId: (id) => set({ resumeId: id }),
+      slug: null,
+      setSlug: (slug) => set({ slug }),
+      selectedTemplate: "classic",
+      setSelectedTemplate: (template) => set({ selectedTemplate: template }),
+      resetToInitial: () => set({ resumeData: initialData }),
+      hasHydrated: false,
+      setHasHydrated: (state) => set({ hasHydrated: state })
+    }),
+    {
+      name: 'resumeBuilderDraft',
+      storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
       }
     }
-  }, []);
-
-  const updatePersonalInfo = (data: Partial<PersonalInfo>) => {
-    setResumeData((prev) => ({ ...prev, personalInfo: { ...prev.personalInfo, ...data } }));
-  };
-
-  const updateSummary = (summary: string) => {
-    setResumeData((prev) => ({ ...prev, summary }));
-  };
-
-  const updateSkills = (skills: Skill[]) => {
-    setResumeData((prev) => ({ ...prev, skills }));
-  };
-
-  const updateExperience = (experience: Experience[]) => {
-    setResumeData((prev) => ({ ...prev, experience }));
-  };
-
-  const updateProjects = (projects: Project[]) => {
-    setResumeData((prev) => ({ ...prev, projects }));
-  };
-
-  const updateEducation = (education: Education[]) => {
-    setResumeData((prev) => ({ ...prev, education }));
-  };
-
-  const updateAwards = (awards: Award[]) => {
-    setResumeData((prev) => ({ ...prev, awards }));
-  };
-
-  return (
-    <ResumeContext.Provider
-      value={{
-        resumeData,
-        setResumeData,
-        currentStep,
-        setCurrentStep,
-        updatePersonalInfo,
-        updateSummary,
-        updateSkills,
-        updateExperience,
-        updateProjects,
-        updateEducation,
-        updateAwards,
-        resumeId,
-        setResumeId,
-        slug,
-        setSlug,
-        selectedTemplate,
-        setSelectedTemplate,
-      }}
-    >
-      {children}
-    </ResumeContext.Provider>
-  );
-};
-
-export const useResumeContext = () => {
-  const context = useContext(ResumeContext);
-  if (context === undefined) {
-    throw new Error("useResumeContext must be used within a ResumeProvider");
-  }
-  return context;
-};
+  )
+);

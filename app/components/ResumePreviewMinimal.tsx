@@ -1,16 +1,16 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { useResumeContext, Skill, Experience, Project, Education, Award } from "../context/ResumeContext";
+import { useResumeStore, Skill, Experience, Project, Education, Award } from "../store/useResumeStore";
 
 const ResumePreviewMinimal = forwardRef<HTMLDivElement>((props, ref) => {
-  const { resumeData } = useResumeContext();
+  const { resumeData } = useResumeStore();
   const { personalInfo, summary, skills, experience, projects, education, awards } = resumeData;
 
   return (
     <div 
       ref={ref}
-      className="bg-white text-gray-900 w-[794px] min-h-[1123px] shadow-2xl box-border p-12 font-serif mx-auto"
+      className="bg-white text-gray-900 w-[794px] min-h-[1123px] shadow-2xl box-border p-12 font-serif mx-auto print:shadow-none print:m-0"
       style={{ fontFamily: "'Georgia', serif" }}
     >
       {/* HEADER */}
@@ -27,9 +27,7 @@ const ResumePreviewMinimal = forwardRef<HTMLDivElement>((props, ref) => {
       {/* SUMMARY */}
       {summary && (
         <div className="mb-8 text-center max-w-2xl mx-auto">
-          <p className="text-sm leading-loose text-gray-700 italic">
-            {summary}
-          </p>
+          <div className="text-sm leading-loose text-gray-700 italic" dangerouslySetInnerHTML={{ __html: summary }} />
         </div>
       )}
 

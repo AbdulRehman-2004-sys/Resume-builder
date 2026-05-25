@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { useResumeContext } from "../../context/ResumeContext";
+import { useResumeStore } from "../../store/useResumeStore";
 
 const PersonalInfoForm = () => {
-  const { resumeData, updatePersonalInfo } = useResumeContext();
+  const { resumeData, updatePersonalInfo } = useResumeStore();
   const { personalInfo } = resumeData;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

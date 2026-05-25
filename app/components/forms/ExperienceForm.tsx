@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useResumeContext, Experience } from "../../context/ResumeContext";
+import { useResumeStore, Experience } from "../../store/useResumeStore";
 import { Plus, Trash2 } from "lucide-react";
 
 const ExperienceForm = () => {
-  const { resumeData, updateExperience } = useResumeContext();
+  const { resumeData, updateExperience } = useResumeStore();
 
   const handleAddExp = () => {
     updateExperience([
@@ -35,19 +35,24 @@ const ExperienceForm = () => {
 
   const handleAddAchievement = (expIndex: number) => {
     const newExp = [...resumeData.experience];
-    newExp[expIndex].achievements.push("");
+    const newAchievements = [...newExp[expIndex].achievements, ""];
+    newExp[expIndex] = { ...newExp[expIndex], achievements: newAchievements };
     updateExperience(newExp);
   };
 
   const handleAchievementChange = (expIndex: number, achIndex: number, value: string) => {
     const newExp = [...resumeData.experience];
-    newExp[expIndex].achievements[achIndex] = value;
+    const newAchievements = [...newExp[expIndex].achievements];
+    newAchievements[achIndex] = value;
+    newExp[expIndex] = { ...newExp[expIndex], achievements: newAchievements };
     updateExperience(newExp);
   };
 
   const handleRemoveAchievement = (expIndex: number, achIndex: number) => {
     const newExp = [...resumeData.experience];
-    newExp[expIndex].achievements.splice(achIndex, 1);
+    const newAchievements = [...newExp[expIndex].achievements];
+    newAchievements.splice(achIndex, 1);
+    newExp[expIndex] = { ...newExp[expIndex], achievements: newAchievements };
     updateExperience(newExp);
   };
 

@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useResumeContext, Education } from "../../context/ResumeContext";
+import { useResumeStore, Education } from "../../store/useResumeStore";
 import { Plus, Trash2 } from "lucide-react";
 
 const EducationForm = () => {
-  const { resumeData, updateEducation } = useResumeContext();
+  const { resumeData, updateEducation } = useResumeStore();
 
   const handleAddEducation = () => {
     updateEducation([

@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useResumeContext, Project } from "../../context/ResumeContext";
+import { useResumeStore, Project } from "../../store/useResumeStore";
 import { Plus, Trash2 } from "lucide-react";
 
 const ProjectsForm = () => {
-  const { resumeData, updateProjects } = useResumeContext();
+  const { resumeData, updateProjects } = useResumeStore();
 
   const handleAddProject = () => {
     updateProjects([
@@ -34,19 +34,24 @@ const ProjectsForm = () => {
 
   const handleAddAchievement = (projIndex: number) => {
     const newProjects = [...resumeData.projects];
-    newProjects[projIndex].achievements.push("");
+    const newAchievements = [...newProjects[projIndex].achievements, ""];
+    newProjects[projIndex] = { ...newProjects[projIndex], achievements: newAchievements };
     updateProjects(newProjects);
   };
 
   const handleAchievementChange = (projIndex: number, achIndex: number, value: string) => {
     const newProjects = [...resumeData.projects];
-    newProjects[projIndex].achievements[achIndex] = value;
+    const newAchievements = [...newProjects[projIndex].achievements];
+    newAchievements[achIndex] = value;
+    newProjects[projIndex] = { ...newProjects[projIndex], achievements: newAchievements };
     updateProjects(newProjects);
   };
 
   const handleRemoveAchievement = (projIndex: number, achIndex: number) => {
     const newProjects = [...resumeData.projects];
-    newProjects[projIndex].achievements.splice(achIndex, 1);
+    const newAchievements = [...newProjects[projIndex].achievements];
+    newAchievements.splice(achIndex, 1);
+    newProjects[projIndex] = { ...newProjects[projIndex], achievements: newAchievements };
     updateProjects(newProjects);
   };
 

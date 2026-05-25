@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useResumeContext, Award } from "../../context/ResumeContext";
+import { useResumeStore, Award } from "../../store/useResumeStore";
 import { Plus, Trash2 } from "lucide-react";
 
 const AwardsForm = () => {
-  const { resumeData, updateAwards } = useResumeContext();
+  const { resumeData, updateAwards } = useResumeStore();
 
   const handleAddAward = () => {
     updateAwards([

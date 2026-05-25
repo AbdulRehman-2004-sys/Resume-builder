@@ -1,16 +1,16 @@
 "use client";
 
 import React, { forwardRef } from "react";
-import { useResumeContext, Skill, Experience, Project, Education, Award } from "../context/ResumeContext";
+import { useResumeStore, Skill, Experience, Project, Education, Award } from "../store/useResumeStore";
 
 const ResumePreviewModern = forwardRef<HTMLDivElement>((props, ref) => {
-  const { resumeData } = useResumeContext();
+  const { resumeData } = useResumeStore();
   const { personalInfo, summary, skills, experience, projects, education, awards } = resumeData;
 
   return (
     <div 
       ref={ref}
-      className="bg-white text-gray-800 w-[794px] min-h-[1123px] shadow-2xl box-border font-sans flex mx-auto overflow-hidden"
+      className="bg-white text-gray-800 w-[794px] min-h-[1123px] shadow-2xl box-border font-sans flex mx-auto print:shadow-none print:m-0"
       style={{ fontFamily: "'Outfit', 'Inter', sans-serif" }}
     >
       {/* Sidebar */}
@@ -62,9 +62,7 @@ const ResumePreviewModern = forwardRef<HTMLDivElement>((props, ref) => {
         {summary && (
           <div>
             <h2 className="text-gray-900 font-bold tracking-widest uppercase border-b-2 border-gray-100 pb-2 mb-4">Profile</h2>
-            <p className="text-sm text-gray-600 leading-relaxed text-justify">
-              {summary}
-            </p>
+            <div className="text-sm text-gray-600 leading-relaxed text-justify" dangerouslySetInnerHTML={{ __html: summary }} />
           </div>
         )}
 

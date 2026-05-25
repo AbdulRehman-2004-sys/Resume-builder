@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { useResumeContext, Skill } from "../../context/ResumeContext";
+import { useResumeStore, Skill } from "../../store/useResumeStore";
 import { Plus, Trash2 } from "lucide-react";
 
 const SkillsForm = () => {
-  const { resumeData, updateSkills } = useResumeContext();
+  const { resumeData, updateSkills } = useResumeStore();
 
   const handleAddSkill = () => {
     updateSkills([...resumeData.skills, { category: "", items: "" }]);

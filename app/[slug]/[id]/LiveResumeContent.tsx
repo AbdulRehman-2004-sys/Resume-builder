@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useResumeContext } from "../../context/ResumeContext";
+import { useResumeStore } from "../../store/useResumeStore";
 import ResumePreview from "../../components/ResumePreview";
 
 export default function LiveResumeContent({ initialData }: { initialData: any }) {
-  const { setResumeData } = useResumeContext();
+  const { setResumeData } = useResumeStore();
 
   useEffect(() => {
     if (initialData) {

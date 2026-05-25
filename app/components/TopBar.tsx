@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Download, Link as LinkIcon, Check } from "lucide-react";
-import { useResumeContext } from "../context/ResumeContext";
+import { useResumeStore } from "../store/useResumeStore";
 import Link from "next/link";
 
 interface TopBarProps {
@@ -10,7 +10,7 @@ interface TopBarProps {
 }
 
 const TopBar: React.FC<TopBarProps> = ({ onDownloadPDF }) => {
-  const { resumeData, selectedTemplate, setSelectedTemplate } = useResumeContext();
+  const { resumeData, selectedTemplate, setSelectedTemplate } = useResumeStore();
   // const [copied, setCopied] = useState(false);
 
   // const handleShareLink = () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useResumeContext } from "../context/ResumeContext";
+import { useResumeStore } from "../store/useResumeStore";
 import { ChevronLeft, ChevronRight, CheckCircle2, Copy, ExternalLink, Loader2 } from "lucide-react";
 import { saveResume } from "../actions/resumeActions";
 
@@ -27,7 +27,7 @@ const STEPS = [
 ];
 
 const FormWizard = () => {
-  const { currentStep, setCurrentStep, resumeData, resumeId, setResumeId, slug, setSlug, selectedTemplate } = useResumeContext();
+  const { currentStep, setCurrentStep, resumeData, resumeId, setResumeId, slug, setSlug, selectedTemplate } = useResumeStore();
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -49,6 +49,10 @@ const FormWizard = () => {
       setSlug(result.slug);
       setShowSuccess(true);
       
+      if (resumeId === 'new' || !resumeId) {
+        window.history.pushState({}, '', `/build/${result.id}`);
+      }
+
       // Open the new tab
       const generatedLink = `${window.location.origin}/${result.slug}/${result.id}`;
       window.open(generatedLink, '_blank');

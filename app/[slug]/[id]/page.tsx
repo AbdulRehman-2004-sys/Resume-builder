@@ -1,7 +1,6 @@
 import React from "react";
 import { getResumeById } from "../../actions/resumeActions";
 import { notFound } from "next/navigation";
-import { ResumeProvider } from "../../context/ResumeContext";
 import LiveResumeContent from "./LiveResumeContent";
 
 export default async function LiveResumePage({ params }: { params: Promise<{ slug: string; id: string }> }) {
@@ -16,8 +15,6 @@ export default async function LiveResumePage({ params }: { params: Promise<{ slu
   const resumeData = result.data;
 
   return (
-    <ResumeProvider>
-      <LiveResumeContent initialData={resumeData} />
-    </ResumeProvider>
+    <LiveResumeContent initialData={resumeData} />
   );
 }

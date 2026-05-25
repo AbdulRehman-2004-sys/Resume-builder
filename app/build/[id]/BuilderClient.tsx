@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-import { ResumeProvider, useResumeContext } from "@/app/context/ResumeContext";
+import { useResumeStore } from "@/app/store/useResumeStore";
 import TopBar from "@/app/components/TopBar";
 import FormWizard from "@/app/components/FormWizard";
 import ResumePreview from "@/app/components/ResumePreview";
@@ -10,19 +10,30 @@ import ResumePreviewMinimal from "@/app/components/ResumePreviewMinimal";
 
 function BuilderContent({ initialData, resumeId }: { initialData: any, resumeId: string }) {
   const targetRef = useRef<HTMLDivElement>(null);
-  const { setResumeData, setResumeId, selectedTemplate, setSelectedTemplate } = useResumeContext();
+  const { resumeData, setResumeData, setResumeId, selectedTemplate, setSelectedTemplate, resumeId: storeResumeId, resetToInitial, hasHydrated } = useResumeStore();
 
   useEffect(() => {
-    if (initialData) {
-      setResumeData(initialData);
-      if (initialData.templateId) {
-        setSelectedTemplate(initialData.templateId);
+    // Wait until Zustand has fully hydrated from localStorage before making decisions
+    if (!hasHydrated) return;
+
+    // Only overwrite the Zustand store with database initialData 
+    // if we navigated to a DIFFERENT resume ID than what's in the store.
+    // This ensures that local unsaved changes are NOT wiped out on browser refresh.
+    if (storeResumeId !== resumeId) {
+      if (resumeId === 'new') {
+        resetToInitial();
+        setResumeId('new');
+      } else {
+        if (initialData) {
+          setResumeData(initialData);
+          if (initialData.templateId) {
+            setSelectedTemplate(initialData.templateId);
+          }
+        }
+        setResumeId(resumeId);
       }
     }
-    if (resumeId !== 'new') {
-      setResumeId(resumeId);
-    }
-  }, [initialData, resumeId, setResumeData, setResumeId, setSelectedTemplate]);
+  }, [hasHydrated, initialData, resumeId, storeResumeId, setResumeData, setResumeId, setSelectedTemplate, resetToInitial]);
 
   const handleDownloadPDF = () => {
     window.print();
@@ -69,8 +80,6 @@ function BuilderContent({ initialData, resumeId }: { initialData: any, resumeId:
 
 export default function BuilderClient({ initialData, resumeId }: { initialData: any, resumeId: string }) {
   return (
-    <ResumeProvider>
-      <BuilderContent initialData={initialData} resumeId={resumeId} />
-    </ResumeProvider>
+    <BuilderContent initialData={initialData} resumeId={resumeId} />
   );
 }

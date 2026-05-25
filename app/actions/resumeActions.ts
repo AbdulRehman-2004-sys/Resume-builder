@@ -15,11 +15,13 @@ export async function saveResume(resumeData: any, existingId?: string | null) {
     let baseSlug = fullName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
     if (!baseSlug) baseSlug = "resume";
 
-    if (existingId) {
+    if (existingId && existingId !== 'new') {
       // Update existing record
+      // We don't update the slug here to prevent breaking existing shared links
+      // and to avoid duplicate key violations if the generated baseSlug is already taken.
       const { data: updatedResume, error } = await supabase
         .from("resumes")
-        .update({ data: resumeData, slug: baseSlug })
+        .update({ data: resumeData })
         .eq("id", existingId)
         .eq("user_id", user.id)
         .select()
